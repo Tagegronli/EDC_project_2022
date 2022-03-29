@@ -28,7 +28,7 @@ def plot_objects(filename, color, name, plt1, plt2):
     return
 
 
-def plottscript():
+def plotscript():
     #setting names for parameters
     naming = ["sepal length [cm]", "sepal width [cm]", "petal length [cm]", "petal width [cm]"]
 
@@ -57,4 +57,4 @@ def plottscript():
 
 
 
-plottscript()
+#plotscript()
