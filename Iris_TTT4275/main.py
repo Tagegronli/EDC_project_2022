@@ -1,5 +1,5 @@
-from Plotscript import *
-import numpy as np
+#from Plotscript import *
+from Utilities import *
 
 # LINK TIL BLOGG:
 # https://towardsdatascience.com/a-look-at-the-maths-behind-linear-classification-166e99a9e5fb
@@ -28,36 +28,34 @@ import numpy as np
 # W(m) = W(m-1) - alpha * grad(MSE)
 # m is the iteration of W
 
-class flower:
-    def __init__(self, data):
-        # Instance Variables:
-        self.sepal_L = data[0]
-        self.sepal_w = data[1]
-        self.petal_l = data[2]
-        self.petal_w = data[3]
+# C = number of classes
+# D
 
-        if(len(data) > 4):
-            self.type = data[4]
-        else:
-            self.type = "unknown"
+step = 0.5
 
-        return
+types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
 
 
-def compare():
-    C = 3
-    D = 5
-
-    t = [0, 0, 0]
-    W = []
-    for i in range(D+1):
-        W.append(np.zeros(C))
+setosa_array = get_flower_array("class_1.csv", types[0])
+versicolor_array = get_flower_array("class_1.csv", types[1])
+virginica_array = get_flower_array("class_1.csv", types[2])
 
 
 
-data = [2,3,4,5, "sunflower"]
 
-sunflower = flower(data)
-print(sunflower.type)
-print(sunflower.petal_w)
-print(sunflower.petal_l)
+W = make_zero_matrix(len(types), len(setosa_array))
+
+
+# TESTING
+#######################################
+#data = ["2.2","3.1","4.2","5.3", "sunflower"]
+#sunflower = flower(data)
+#w = get_flower_array("class_1.csv", types[1])
+#print(w[5].type)
+
+
+def Train(W, step):
+
+    return W
+
+######################################
