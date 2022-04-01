@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import math
 
 class flower:
     def __init__(self, data, type = None): # <- Must take in data only consisting of strings
@@ -21,12 +22,7 @@ class flower:
 
 
 # Makes a CxD with only zeros
-def make_zero_matrix(C, D):
-    W = []
-    for i in range(D):
-        W.append(np.zeros(C))
-
-    return W
+# JUST USE: np.zeros(C, D)
 
 
 # Makes array of flower objects, we can decide type IF we want (not necessary if it exist in data)
@@ -44,3 +40,14 @@ def get_flower_array(filename, type = None):
     return flower_array
 
 
+def compute_gi(x, W, w_0):
+    gi = np.add(np.dot(W, x), w_0)
+    return gi
+
+def gi_sigmoid(x, W, w_0):
+    zi = compute_gi(x, W, w_0)
+    gi = []
+    for z in zi:
+        gi.append(1 / (1 + math.exp(-z)))
+
+    return gi
