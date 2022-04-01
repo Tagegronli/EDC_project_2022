@@ -40,28 +40,43 @@ from Utilities import *
 step = 0.5
 
 types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
-t = [0,0,0]
+
 
 setosa_array = get_flower_array("class_1.csv", types[0])
 versicolor_array = get_flower_array("class_1.csv", types[1])
 virginica_array = get_flower_array("class_1.csv", types[2])
+traning_data = setosa_array + versicolor_array + virginica_array
 
+
+
+
+#x = [setosa_array[0].sepal_L, setosa_array[0].sepal_w, setosa_array[0].petal_l, setosa_array[0].petal_w]
+#t = get_t(setosa_array[0], types)
+
+
+# Need to be initialized:
+W = np.zeros((4,3)) # 3x4
+w_0 = [1,1,1]
+
+W = update_W(W, w_0) # W is now 3x5 as required in the compendium
+#x = update_x(x) # x is not 5x1 required in the compendium
 
 
 
 # TESTING
 #######################################
-#data = ["2.2","3.1","4.2","5.3", "sunflower"]
-#sunflower = flower(data)
-#w = get_flower_array("class_1.csv", types[1])
-#print(w[5].type)
+
+#g = compute_g(x, W)
+g = g_sigmoid(x, W)
 
 
-x = [setosa_array[0].sepal_L, setosa_array[0].sepal_w, setosa_array[0].petal_l, setosa_array[0].petal_w]
+print(len(traning_data))
+#print(g)
+#print(compute_divMSE_k(x, g, t))
+#print(compute_g(x, W, w_0))
+#print(W)
+#print(g_sigmoid(x, W, w_0))
 
-W = np.zeros((len(types),len(x))) # 3x4
-
-print(gi_sigmoid(x, W, [1,2,2]))
 
 
 ######################################
