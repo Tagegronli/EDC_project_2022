@@ -21,6 +21,7 @@ class flower:
         return
 
 
+
 # Makes a CxD with only zeros
 # JUST USE: np.zeros(C, D)
 
@@ -41,19 +42,55 @@ def get_flower_array(filename, type = None):
 
 
 
-# W is now 3x5 as required in the compendium
-def update_W(W, w_0):
-    W = np.append([W[0], W[1], W[2], W[3]], [w_0], axis=0)  # <- Had to hardcode this...
-    #print(W)
-    return W
+
+# Makes 3x5 zero matrix
+def init_W(C, D):
+    return np.zeros(shape = (D+1, C))
 
 
 
-# x is not 5x1 required in the compendium
-def update_x(x):
-    x = np.append(x, 1.0)
-    #print(x)
+
+
+def init_training_data(types, samples):
+    setosa_array = get_flower_array("class_1.csv", types[0])
+    versicolor_array = get_flower_array("class_2.csv", types[1])
+    virginica_array = get_flower_array("class_3.csv", types[2])
+
+    training_data = setosa_array[:samples] + versicolor_array[:samples] + virginica_array[:samples]
+
+    return training_data
+
+
+
+
+def init_test_data(types, samples):
+    setosa_array = get_flower_array("class_1.csv", types[0])
+    versicolor_array = get_flower_array("class_2.csv", types[1])
+    virginica_array = get_flower_array("class_3.csv", types[2])
+
+    test_data = setosa_array[samples:] + versicolor_array[samples:] + virginica_array[samples:]
+
+    return test_data
+
+
+
+
+def get_x_data(traning_data):
+    x_data = []
+    for i in range(len(traning_data)):
+        x = [traning_data[i].sepal_L, traning_data[i].sepal_w, traning_data[i].petal_l, traning_data[i].petal_w]
+        x_data.append(x)
+
+    return x_data
+
+
+
+
+def init_x(flower):
+    x = [1, flower.sepal_L, flower.sepal_w, flower.petal_l, flower.petal_w]
     return x
+
+
 
 
 # Computes g from W and w_0 as shown in (7)
@@ -66,6 +103,7 @@ def compute_g(x, W):
 
 
 
+
 # computes sigmoid of g elementwise and returns "new" g. Shown in (20)
 def g_sigmoid(x, W):
     z = compute_g(x, W)
@@ -74,6 +112,8 @@ def g_sigmoid(x, W):
         g.append(1 / (1 + math.exp(-zi)))
 
     return g
+
+
 
 
 # Returns correct t array: [1,0,0], [0,1,0], [0,0,1]
@@ -92,27 +132,56 @@ def get_t(flower, types):
 
 
 
+
+# Shown in (22)
+def compute_gradMSE_k(x, g, t):
+    a = []
+    for i in range(len(g)):
+        b = (g[i] - t[i]) * g[i] * (1 - g[i])
+        a.append(b)
+    #print(res)
+    #print(np.transpose([x]))
+    gradMSE_k = np.dot(np.transpose([x]),[a])
+
+    return gradMSE_k
+
+
 ##### WORK IN PROGRESS ######
 
 
-# Shown in (22)
-def compute_divMSE_k(x, g, t):
-    comp = []
-    for i in range(len(g)):
-        s = (g[i] - t[i]) * g[i] * (1 - g[i])
-        comp.append(s)
-    #print(res)
-    #print(np.transpose([x]))
-    divMSE_k = np.dot(np.transpose([x]),[comp])
 
-    return divMSE_k
+def compute_gradMSE(types, W, traning_data): # W already updated
+    gradMSE = np.zeros(shape = (4+1,3))
+    for k in traning_data:
+        x = init_x(k)
+        g = g_sigmoid(x, W)
+        t = get_t(k, types)
 
+        gradMSE_k = compute_gradMSE_k(x, g, t)
+        gradMSE = np.add(gradMSE, gradMSE_k)
 
-def compute_divMSE(W, training_data): # W already updated
-    for f in training_data:
-        x = update_x([f.sepal_L, f.sepal_w, f.petal_l, f.petal_w])
-        g = g_sigmoid(w)
-    return 0
+    return gradMSE
 
 
+
+def iterate_W(W, gradMSE, step):
+    W = np.subtract(W, step*gradMSE)
+    return W
+
+
+def compute_MSE(test_data, W, types):
+    array = []
+    for f in test_data:
+        x = init_x(f)
+        t = get_t(f, types)
+        g = g_sigmoid(x, W)
+        MSE = np.dot(np.transpose(np.subtract(g, t)), np.subtract(g, t))
+        array.append(MSE)
+        #print(MSE)
+
+    MSE = 0
+    for o in array:
+        MSE += o
+
+    return (1/2)*MSE
 

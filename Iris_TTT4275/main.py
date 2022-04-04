@@ -1,6 +1,6 @@
 #from Plotscript import *
 import numpy as np
-
+import matplotlib.pyplot as plt
 from Utilities import *
 
 # LINK TIL BLOGG:
@@ -37,31 +37,25 @@ from Utilities import *
 
 # DATA = ["sepal length [cm]", "sepal width [cm]", "petal length [cm]", "petal width [cm]"]
 
-step = 0.5
+step = 0.1
 
 types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
 
 
 setosa_array = get_flower_array("class_1.csv", types[0])
-versicolor_array = get_flower_array("class_1.csv", types[1])
-virginica_array = get_flower_array("class_1.csv", types[2])
-traning_data = setosa_array + versicolor_array + virginica_array
+versicolor_array = get_flower_array("class_2.csv", types[1])
+virginica_array = get_flower_array("class_3.csv", types[2])
 
 
+training_data = init_training_data(types, 30) # Flower array
+#x_data = get_x_data(traning_data)
 
 
-#x = [setosa_array[0].sepal_L, setosa_array[0].sepal_w, setosa_array[0].petal_l, setosa_array[0].petal_w]
-#t = get_t(setosa_array[0], types)
+x = init_x(training_data[0])
+t = get_t(training_data[0], types)
+W = init_W(3, 4)
 
-
-# Need to be initialized:
-W = np.zeros((4,3)) # 3x4
-w_0 = [1,1,1]
-
-W = update_W(W, w_0) # W is now 3x5 as required in the compendium
-#x = update_x(x) # x is not 5x1 required in the compendium
-
-
+print(W)
 
 # TESTING
 #######################################
@@ -70,13 +64,49 @@ W = update_W(W, w_0) # W is now 3x5 as required in the compendium
 g = g_sigmoid(x, W)
 
 
-print(len(traning_data))
-#print(g)
-#print(compute_divMSE_k(x, g, t))
-#print(compute_g(x, W, w_0))
+gradMSE = compute_gradMSE(types, W, training_data)
+ny_W = iterate_W(W, gradMSE, step)
+
+print(ny_W)
 #print(W)
-#print(g_sigmoid(x, W, w_0))
+#print(init_W(types, x))
 
 
 
 ######################################
+
+
+def main(iterations, step):
+    print("Initialsing variables")
+    types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
+    traning_data = init_training_data(types, 30)    # Flower array used for training
+    test_data = init_test_data(types, 20)           # Flower array used for testing
+
+    W = init_W(3, 4)
+
+
+
+    # Training
+    print("Training and calculating MSE, " + "step size = " + str(step))
+    iteration = np.arange(0, iterations)
+    MSE_array = []
+    for i in iteration:
+        gradMSE = compute_gradMSE(types, W, traning_data)
+        W = iterate_W(W, gradMSE, step)
+
+        MSE_array.append(compute_MSE(test_data, W, types))
+
+
+    #print(MSE_array)
+    plt.plot(iteration, MSE_array, label = "step: "+str(step))
+
+
+run = [0.01, 0.005, 0.0025, 0.001]
+for i in run:
+    main(1000, i)
+
+plt.grid()
+plt.legend()
+plt.xlabel("Iterations")
+plt.ylabel("MSE")
+plt.show()
