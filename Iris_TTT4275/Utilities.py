@@ -1,7 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import csv
 import math
 
+
+# Flower class, holds all data and has a "type" which is the label.
+# If type is not spesified, it will try to look for it in the dataset
 class flower:
     def __init__(self, data, type = None): # <- Must take in data only consisting of strings
         self.sepal_L = float(data[0])
@@ -22,11 +26,9 @@ class flower:
 
 
 
-# Makes a CxD with only zeros
-# JUST USE: np.zeros(C, D)
 
 
-# Makes array of flower objects, we can decide type IF we want (not necessary if it exist in data)
+# Makes array of flower objects, we can decide type if we want (not necessary if it exist in data)
 def get_flower_array(filename, type = None):
     data_lines = csv.reader(open(filename))
     flower_array = []
@@ -43,7 +45,7 @@ def get_flower_array(filename, type = None):
 
 
 
-# Makes 3x5 zero matrix
+# Makes 3x5 zero matrix. Initialising W with w_0
 def init_W(C, D):
     return np.zeros(shape = (D+1, C))
 
@@ -219,3 +221,45 @@ def get_result_matrix(test_data, W, types):
 
 
     return result_matrix
+
+
+def simulate(iterations, step):
+    #print("Initialsing variables")
+    types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
+    traning_data = init_training_data(types, 30)    # Flower array used for training
+    test_data = init_test_data(types, 20)           # Flower array used for testing
+
+    W = init_W(3, 4)
+
+
+
+    print("Step size = " + str(step) + ", processing... ")
+    iteration = np.arange(0, iterations)
+    MSE_array = []
+    error_array = []
+
+    for i in iteration:
+        # Training
+        gradMSE = compute_gradMSE(types, W, traning_data)
+        W = iterate_W(W, gradMSE, step)
+
+        #Testing
+        MSE = compute_MSE(test_data, W, types)
+        MSE_array.append(MSE)
+
+        results = get_results(test_data, W, types)
+
+        error_array.append(100*results[1]/(results[0] + results[1]))
+
+
+    #Plotting MSE and Error
+    plt.figure(1)
+    plt.plot(iteration, MSE_array, label = "step: "+str(step))
+    MSE_min = np.argmin(MSE_array)
+    print("Smallest MSE: " + str(MSE_array[MSE_min]) + " at iteration: " + str(MSE_min) + ", step size = " + str(step))
+
+    plt.figure(2)
+    plt.plot(iteration, error_array, label = "step: "+str(step))
+    error_min = np.argmin(error_array)
+    print("Smallest error: " + str(error_array[MSE_min]) + " at iteration: " + str(error_min) + ", step size = " + str(step))
+    print(" ")
