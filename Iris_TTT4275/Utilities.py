@@ -146,7 +146,6 @@ def compute_gradMSE_k(x, g, t):
     return gradMSE_k
 
 
-##### WORK IN PROGRESS ######
 
 
 
@@ -185,3 +184,38 @@ def compute_MSE(test_data, W, types):
 
     return (1/2)*MSE
 
+def get_results(test_data, W, types):
+    correct = 0
+    false = 0
+    for f in test_data:
+        t = get_t(f, types)
+        g = g_sigmoid(init_x(f), W)
+        classified = np.argmax(g)
+        true  = np.argmax(t)
+        if(classified == true):
+            correct +=1
+        else:
+            false += 1
+
+    return [correct, false]
+
+
+
+##### WORK IN PROGRESS ######
+def get_result_matrix(test_data, W, types):
+    result_matrix = []
+    header = ["Classified / True class", types[0], types[1], types[2]]
+    empty = [".", ".", ".", ".", "."]
+    result_matrix.append(header)
+    for i in range(5):
+        result_matrix.append(empty)
+
+
+    for f in test_data:
+        t = get_t(f, types)
+        g = g_sigmoid(init_x(f), W)
+        classified = np.argmax(g)
+        true  = np.argmax(t)
+
+
+    return result_matrix

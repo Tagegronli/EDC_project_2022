@@ -37,47 +37,12 @@ from Utilities import *
 
 # DATA = ["sepal length [cm]", "sepal width [cm]", "petal length [cm]", "petal width [cm]"]
 
-step = 0.1
-
-types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
-
-
-setosa_array = get_flower_array("class_1.csv", types[0])
-versicolor_array = get_flower_array("class_2.csv", types[1])
-virginica_array = get_flower_array("class_3.csv", types[2])
-
-
-training_data = init_training_data(types, 30) # Flower array
-#x_data = get_x_data(traning_data)
-
-
-x = init_x(training_data[0])
-t = get_t(training_data[0], types)
-W = init_W(3, 4)
-
-print(W)
-
-# TESTING
-#######################################
-
-#g = compute_g(x, W)
-g = g_sigmoid(x, W)
-
-
-gradMSE = compute_gradMSE(types, W, training_data)
-ny_W = iterate_W(W, gradMSE, step)
-
-print(ny_W)
-#print(W)
-#print(init_W(types, x))
-
-
 
 ######################################
 
 
 def main(iterations, step):
-    print("Initialsing variables")
+    #print("Initialsing variables")
     types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
     traning_data = init_training_data(types, 30)    # Flower array used for training
     test_data = init_test_data(types, 20)           # Flower array used for testing
@@ -86,27 +51,54 @@ def main(iterations, step):
 
 
 
-    # Training
-    print("Training and calculating MSE, " + "step size = " + str(step))
+    print("Training and testing, " + "step size = " + str(step))
     iteration = np.arange(0, iterations)
     MSE_array = []
+    error_array = []
+
     for i in iteration:
+        # Training
         gradMSE = compute_gradMSE(types, W, traning_data)
         W = iterate_W(W, gradMSE, step)
 
-        MSE_array.append(compute_MSE(test_data, W, types))
+        #Testing
+        MSE = compute_MSE(test_data, W, types)
+        MSE_array.append(MSE)
+
+        results = get_results(test_data, W, types)
+
+        error_array.append(100*results[1]/(results[0] + results[1]))
 
 
-    #print(MSE_array)
+    #Plotting MSE and Error
+    plt.figure(1)
     plt.plot(iteration, MSE_array, label = "step: "+str(step))
+    MSE_min = np.argmin(MSE_array)
+    print("Smallest MSE: " + str(MSE_array[MSE_min]) + " at iteration: " + str(MSE_min) + ", step size = " + str(step))
+
+    plt.figure(2)
+    plt.plot(iteration, error_array, label = "step: "+str(step))
+    error_min = np.argmin(error_array)
+    print("Smallest error: " + str(error_array[MSE_min]) + " at iteration: " + str(error_min) + ", step size = " + str(step))
+    print(" ")
 
 
+
+# Plotting
 run = [0.01, 0.005, 0.0025, 0.001]
 for i in run:
-    main(1000, i)
+    main(2000, i)
 
+plt.figure(1)
 plt.grid()
 plt.legend()
 plt.xlabel("Iterations")
 plt.ylabel("MSE")
+
+plt.figure(2)
+plt.grid()
+plt.legend()
+plt.xlabel("Iterations")
+plt.ylabel("Error %")
+
 plt.show()
