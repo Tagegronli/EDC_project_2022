@@ -29,7 +29,7 @@ def print_guess(guess, answer, image=None):
     print("=======================================")
     print()
 
-def guess_images(templates, template_labels, images, images_labels, print_guesses=False):
+def classify_images(templates, template_labels, images, images_labels, print_guesses=False):
     K = 11
     NUMCLASSES = 10
     confusion_matrix = [[0]*NUMCLASSES for i in range(NUMCLASSES)]
@@ -37,7 +37,7 @@ def guess_images(templates, template_labels, images, images_labels, print_guesse
     displayederrors = 0
     displayedcorrect = 0
     for index in range(len(images)):
-        guess = make_guess(templates, template_labels, K, images[index], maxcheck=100)
+        guess = make_guess(templates, template_labels, K, images[index], maxcheck=1000)
         fasit = images_labels[index]
         confusion_matrix[fasit][guess] += 1
         if fasit == guess:
