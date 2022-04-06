@@ -4,6 +4,8 @@ setup(name="number_classifier_kNN",
         version="1.0.0",
         description="Classifier for numbers in MNist database",
         packages=[],
-        entrypoints={
+        entry_points={
             "console_scripts" : ["mnist_classifier = classifier.main:run"]},
-        install_requires=["python-mnist"])
+        install_requires=["python-mnist"],
+        zip_safe = False        
+        )
