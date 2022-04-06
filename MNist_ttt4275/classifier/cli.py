@@ -1,7 +1,5 @@
 import argparse
-import sys
-import os.path
-import main
+from classifier import main
 
 
 def get_arguments():
@@ -25,7 +23,3 @@ def check_arguments(args):
     somearg = args.full_argument_name
     if somearg:
         return somearg
-
-def run():
-    args = get_arguments()
-    main.run(check_arguments(args))
