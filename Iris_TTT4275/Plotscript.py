@@ -57,4 +57,4 @@ def plotscript():
 
 
 
-plotscript()
+#plotscript()

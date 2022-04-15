@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 import math
+import seaborn as sns
 
 
 # Flower class, holds all data and has a "type" which is the label.
@@ -204,30 +205,34 @@ def get_results(test_data, W, types):
 
 
 ##### WORK IN PROGRESS ######
-def get_result_matrix(test_data, W, types):
-    result_matrix = []
-    header = ["Classified / True class", types[0], types[1], types[2]]
-    empty = [".", ".", ".", ".", "."]
-    result_matrix.append(header)
-    for i in range(5):
-        result_matrix.append(empty)
+def get_result_matrix(data, W, types):
+    result_matrix = np.zeros((3,3), dtype=int)
+    #header = ["Classified / True class", types[0], types[1], types[2]]
+    #empty = [".", ".", ".", ".", "."]
+    #result_matrix.append(header)
+    #for i in range(5):
+    #    result_matrix.append(empty)
 
-
-    for f in test_data:
+    for f in data:
         t = get_t(f, types)
         g = g_sigmoid(init_x(f), W)
+
         classified = np.argmax(g)
-        true  = np.argmax(t)
+        true = np.argmax(t)
+        result_matrix[true][classified] += 1
+
+
+
+
 
 
     return result_matrix
 
-
-def simulate(iterations, step):
+# Returns confusion matrix to traning and test data and plots MSE and error for each step factor
+def simulate(iterations, step, train, test, types):
     #print("Initialsing variables")
-    types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
-    traning_data = init_training_data(types, 30)    # Flower array used for training
-    test_data = init_test_data(types, 20)           # Flower array used for testing
+    traning_data = init_training_data(types, train)    # Flower array used for training
+    test_data = init_test_data(types, test)           # Flower array used for testing
 
     W = init_W(3, 4)
 
@@ -252,14 +257,36 @@ def simulate(iterations, step):
         error_array.append(100*results[1]/(results[0] + results[1]))
 
 
-    #Plotting MSE and Error
+    # Plotting MSE and Error
     plt.figure(1)
-    plt.plot(iteration, MSE_array, label = "step: "+str(step))
+    plt.plot(iteration, MSE_array, label = "step factor =" +str(step))
     MSE_min = np.argmin(MSE_array)
     print("Smallest MSE: " + str(MSE_array[MSE_min]) + " at iteration: " + str(MSE_min) + ", step size = " + str(step))
 
+
+
+    # Plotting Error
     plt.figure(2)
-    plt.plot(iteration, error_array, label = "step: "+str(step))
+    plt.plot(iteration, error_array, label="step factor = " + str(step))
     error_min = np.argmin(error_array)
     print("Smallest error: " + str(error_array[MSE_min]) + " at iteration: " + str(error_min) + ", step size = " + str(step))
     print(" ")
+
+
+### WIP:
+
+    # Plotting confusion matrix
+    cm_train = get_result_matrix(traning_data, W, types)
+    cm_test = get_result_matrix(test_data, W, types)
+
+    #print("Result traning set: ")
+    #print(cm_train)
+    #print("Result test set: ")
+    #print(cm_test)
+
+    return [cm_train, cm_test]
+
+
+
+
+
