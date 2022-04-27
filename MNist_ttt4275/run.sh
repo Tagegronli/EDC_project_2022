@@ -1,3 +1,4 @@
-pip install -r requirements.txt
-python setup.py develop --user -q
+. venv/bin/activate
+python setup.py develop
+python setup.py develop --user
 mnist_classifier
