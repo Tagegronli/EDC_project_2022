@@ -2,7 +2,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-def confusion_matrix_heatmap(cf_matrix):
+def confusion_matrix_heatmap(cf_matrix, title):
 
     group_counts = ["{0:0.0f}".format(value) for value in np.array(cf_matrix).flatten()]
     group_percentages = np.array([row/np.sum(row) for row in cf_matrix])
@@ -11,7 +11,7 @@ def confusion_matrix_heatmap(cf_matrix):
     labels = np.asarray(labels).reshape(10, 10)
     ax = sns.heatmap(cf_matrix, annot=labels, fmt='', cmap='Blues')
 
-    ax.set_title('Seaborn Confusion Matrix with labels\n\n')
+    ax.set_title(f'{title}\n\n')
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
 
