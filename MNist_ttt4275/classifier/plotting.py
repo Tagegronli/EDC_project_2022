@@ -22,3 +22,15 @@ def confusion_matrix_heatmap(cf_matrix, title):
 
     ## Display the visualization of the Confusion Matrix.
     plt.show()
+
+def plot_guesses(guesses, title, show_guess=False):
+    fig, axarr = plt.subplots(1, len(guesses))
+    fig.suptitle(title)
+    
+    for idx, guess in enumerate(guesses):
+        axarr[idx].imshow(np.array(guess.get('image')).reshape((28, 28)), cmap='gray', vmin=0, vmax=255)
+        if not show_guess:
+            continue
+        axarr[idx].set_title(f"Guess: {guess.get('guess')}\nAnswer: {guess.get('answer')}\n")
+
+    plt.show()

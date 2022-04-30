@@ -22,6 +22,8 @@ class Results:
         self.error_rate = error_rate
         self.confusion_matrix = confusion_matrix
         self.time = t
+        self.correct_samples = list()
+        self.incorrect_samples = list()
     
     def pprint(self):
         print("Time used: %d ms" % self.time)
@@ -32,11 +34,7 @@ def get_nearest_neighbours(templates, image, options : Options):
     npimage = np.array(image)
     distances = list()
     for cls_templates in templates:
-        if options.clustering:
-            selected_templates = cls_templates
-        else:
-            selected_templates = random.choices(cls_templates, k=options.templates_per_class)
-        distances.extend([np.linalg.norm(npimage-np.array(temp)) for temp in selected_templates])
+        distances.extend([np.linalg.norm(npimage-np.array(temp)) for temp in cls_templates])
     partitioned = np.argpartition(distances, options.k)
     idx_k_smallest = partitioned[:options.k]
     return np.array([floor(index/options.templates_per_class) for index in idx_k_smallest])
@@ -62,12 +60,14 @@ def create_clustered_templates(training_data, options : Options):
         print("Calculated clusters for %d" % idx)
     return templates
 
+def get_random_templates(templates, options: Options):
+    return [random.choices(cls_templates, k=options.templates_per_class) for cls_templates in templates]
+
 def classify(templates, testing_images, testing_labels, options : Options) -> Results:
     t_init = time.time()
     correct_guesses = 0
-    displayederrors = 0
-    displayedcorrect = 0
     confusion_matrix = [[0]*options.n_classes for i in range(options.n_classes)]
+    incorrect_samples, correct_samples = list(), list()
     for idx, image in enumerate(testing_images):
         nearestneighbors = get_nearest_neighbours(templates, image, options)
         guess = np.bincount(nearestneighbors).argmax()
@@ -76,18 +76,23 @@ def classify(templates, testing_images, testing_labels, options : Options) -> Re
         
         if answer == guess:
             correct_guesses += 1
-            if displayedcorrect < 3:
-                print_guess(guess, answer, testing_images[idx])
-                displayedcorrect += 1
-        elif displayederrors < 3:
-            print_guess(guess, answer, testing_images[idx])
-            displayederrors += 1
+            if len(correct_samples) < 4:
+                correct_samples.append({
+                    "image": testing_images[idx], 
+                    "guess": guess,
+                    "answer": answer})
+        elif len(incorrect_samples) < 4:
+                incorrect_samples.append({
+                    "image": testing_images[idx], 
+                    "guess": guess,
+                    "answer": answer})
         if options.print_guesses:
             print_guess(guess, answer)
             print()
 
-    return Results(
-        1-(correct_guesses/len(testing_images)),
-        np.matrix(confusion_matrix),
-        int((time.time()-t_init)*1000)
-        )
+    tused = int((time.time()-t_init)*1000)
+    erate = 1-(correct_guesses/len(testing_images))
+    results = Results(erate, confusion_matrix, tused)
+    results.incorrect_samples = incorrect_samples
+    results.correct_samples = correct_samples
+    return results
