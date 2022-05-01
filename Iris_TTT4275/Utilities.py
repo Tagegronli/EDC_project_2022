@@ -53,9 +53,10 @@ def init_W(C, D):
 
 
 def init_training_data(types, training_samples):
-    setosa_array = get_flower_array("class_1.csv", types[0])
-    versicolor_array = get_flower_array("class_2.csv", types[1])
-    virginica_array = get_flower_array("class_3.csv", types[2])
+    BASE = "Iris_TTT4275/"
+    setosa_array = get_flower_array(f"{BASE}class_1.csv", types[0])
+    versicolor_array = get_flower_array(f"{BASE}class_2.csv", types[1])
+    virginica_array = get_flower_array(f"{BASE}class_3.csv", types[2])
 
     training_data = setosa_array[:training_samples] + versicolor_array[:training_samples] + virginica_array[:training_samples]
 
@@ -65,9 +66,10 @@ def init_training_data(types, training_samples):
 
 
 def init_test_data(types, training_samples):
-    setosa_array = get_flower_array("class_1.csv", types[0])
-    versicolor_array = get_flower_array("class_2.csv", types[1])
-    virginica_array = get_flower_array("class_3.csv", types[2])
+    BASE = "Iris_TTT4275/"
+    setosa_array = get_flower_array(f"{BASE}class_1.csv", types[0])
+    versicolor_array = get_flower_array(f"{BASE}class_2.csv", types[1])
+    virginica_array = get_flower_array(f"{BASE}class_3.csv", types[2])
 
     test_data = setosa_array[training_samples:] + versicolor_array[training_samples:] + virginica_array[training_samples:]
 

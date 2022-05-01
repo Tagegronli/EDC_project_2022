@@ -1,5 +1,5 @@
 #from Plotscript import *
-from Utilities import *
+from Iris_TTT4275.Utilities import *
 
 
 def prob1(train, test):
