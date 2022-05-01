@@ -40,7 +40,7 @@ def hisogram():
         virginica_petal_l.append(f.petal_l)
         virginica_petal_w.append(f.petal_w)
 
-    plt.figure(9)
+    #plt.figure(1)
     (fig, ax) = plt.subplots(2,2)
 
     bins = np.linspace(4.0, 8.0, 40)

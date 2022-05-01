@@ -91,9 +91,9 @@ def init_x(flower, features = [1,1,1,1]):
 
 
 
-def get_x_data(traning_data, featues = [1,1,1,1]): #Not in use in problem 1
+def get_x_data(training_data, featues = [1,1,1,1]): #Not in use in problem 1
     x_data = []
-    for f in traning_data:
+    for f in training_data:
         x = init_x(f, featues)
         x_data.append(x)
 
@@ -160,10 +160,10 @@ def compute_gradMSE_k(x, g, t):
 
 
 
-def compute_gradMSE(types, W, traning_data, features = [1,1,1,1]): # W already updated
+def compute_gradMSE(types, W, training_data, features = [1,1,1,1]): # W already updated
     #gradMSE = np.zeros(shape = (4+1,3))
     gradMSE = np.zeros(shape=(len(W),3))
-    for k in traning_data:
+    for k in training_data:
         x = init_x(k, features)
         g = g_sigmoid(x, W)
         t = get_t(k, types)
@@ -180,9 +180,9 @@ def iterate_W(W, gradMSE, step):
     return W
 
 
-def compute_MSE(test_data, W, types, features = [1,1,1,1]):
+def compute_MSE(data, W, types, features = [1,1,1,1]):
     array = []
-    for f in test_data:
+    for f in data:
         x = init_x(f, features)
         t = get_t(f, types)
         g = g_sigmoid(x, W)
@@ -214,7 +214,6 @@ def get_results(data, W, types, features = [1,1,1,1]):
 
 
 
-##### WORK IN PROGRESS ######
 def get_result_matrix(data, W, types, features = [1,1,1,1]):
     result_matrix = np.zeros((3,3), dtype=int)
     #header = ["Classified / True class", types[0], types[1], types[2]]
@@ -234,12 +233,12 @@ def get_result_matrix(data, W, types, features = [1,1,1,1]):
 
 
 
-# Returns confusion matrix to traning and test data and plots MSE and error for each step factor
+# Returns confusion matrix to training and test data and plots MSE and error for each step factor
 def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
     #print("Initialsing variables")
-    traning_data = init_training_data(types, train)    # Flower array used for training
-    #test_data = init_test_data(types, test)           # Flower array used for testing
-    test_data = init_test_data(types, train)
+
+    training_data = init_training_data(types, train)  # Flower array used for training
+    test_data = init_test_data(types, train)  # Flower array used for testing
 
     W = init_W(3, np.sum(features))
 
@@ -253,15 +252,15 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
 
     for i in iteration:
         # Training
-        gradMSE = compute_gradMSE(types, W, traning_data, features)
+        gradMSE = compute_gradMSE(types, W, training_data, features)
         W = iterate_W(W, gradMSE, step)
-        results_train = get_results(traning_data, W, types, features)
+        results_train = get_results(training_data, W, types, features)
         error_array_train.append(100 * results_train[1] / (results_train[0] + results_train[1]))
-
+        # MSE for training
+        MSE = compute_MSE(training_data, W, types, features)
+        MSE_array.append(MSE)
 
         #Testing
-        MSE = compute_MSE(test_data, W, types, features)
-        MSE_array.append(MSE)
         results_test = get_results(test_data, W, types, features)
         error_array_test.append(100*results_test[1]/(results_test[0] + results_test[1]))
 
@@ -289,10 +288,10 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
 
 
     # Plotting confusion matrix
-    cm_train = get_result_matrix(traning_data, W, types, features)
+    cm_train = get_result_matrix(training_data, W, types, features)
     cm_test = get_result_matrix(test_data, W, types, features)
 
-    #print("Result traning set: ")
+    #print("Result training set: ")
     #print(cm_train)
     #print("Result test set: ")
     #print(cm_test)
@@ -303,9 +302,8 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
 
 def simulate_prob2(iterations, step, train, types, features, figure_index):
     #print("Initialsing variables")
-    traning_data = init_training_data(types, train)    # Flower array used for training
+    training_data = init_training_data(types, train)    # Flower array used for training
     test_data = init_test_data(types, train)           # Flower array used for testing
-
 
     W = init_W(3, np.sum(features))
 
@@ -318,7 +316,7 @@ def simulate_prob2(iterations, step, train, types, features, figure_index):
 
     for i in iteration:
         # Training
-        gradMSE = compute_gradMSE(types, W, traning_data, features)
+        gradMSE = compute_gradMSE(types, W, training_data, features)
         W = iterate_W(W, gradMSE, step)
 
         #Testing
@@ -348,13 +346,8 @@ def simulate_prob2(iterations, step, train, types, features, figure_index):
 
 
     # Plotting confusion matrix
-    cm_train = get_result_matrix(traning_data, W, types, features)
+    cm_train = get_result_matrix(training_data, W, types, features)
     cm_test = get_result_matrix(test_data, W, types, features)
-
-    #print("Result traning set: ")
-    #print(cm_train)
-    #print("Result test set: ")
-    #print(cm_test)
 
     return [cm_train, cm_test]
 
