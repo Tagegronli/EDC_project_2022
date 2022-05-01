@@ -2,7 +2,7 @@ from math import floor
 import numpy as np
 import random
 import time
-from classifier import dataaccess
+from MNist_ttt4275.classifier import dataaccess
 from sklearn.cluster import KMeans
 
 class Options:
