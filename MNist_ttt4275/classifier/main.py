@@ -1,5 +1,5 @@
 import time
-from classifier import dataaccess, classify, plotting
+from MNist_ttt4275.classifier import dataaccess, classify, plotting
 
 def run():    
     t_init = time.time()
