@@ -100,19 +100,12 @@ def get_x_data(training_data, featues = [1,1,1,1]): #Not in use in problem 1
     return x_data
 
 
-
-
-
-
 # Computes g from W and w_0 as shown in (7)
 def compute_g(x, W):
     #print(W)
     #print(x)
     g = np.dot(np.transpose(W),x)
     return g
-
-
-
 
 
 # computes sigmoid of g elementwise and returns "new" g. Shown in (20)
@@ -123,9 +116,6 @@ def g_sigmoid(x, W):
         g.append(1 / (1 + math.exp(-zi)))
 
     return g
-
-
-
 
 # Returns correct t array: [1,0,0], [0,1,0], [0,0,1]
 def get_t(flower, types):
@@ -142,9 +132,6 @@ def get_t(flower, types):
         return [0, 0, 0]
 
 
-
-
-# Shown in (22)
 def compute_gradMSE_k(x, g, t):
     a = []
     for i in range(len(g)):
@@ -155,9 +142,6 @@ def compute_gradMSE_k(x, g, t):
     gradMSE_k = np.dot(np.transpose([x]),[a])
 
     return gradMSE_k
-
-
-
 
 
 def compute_gradMSE(types, W, training_data, features = [1,1,1,1]): # W already updated
@@ -174,7 +158,6 @@ def compute_gradMSE(types, W, training_data, features = [1,1,1,1]): # W already 
     return gradMSE
 
 
-
 def iterate_W(W, gradMSE, step):
     W = np.subtract(W, step*gradMSE)
     return W
@@ -186,10 +169,8 @@ def compute_MSE(data, W, types, features = [1,1,1,1]):
         x = init_x(f, features)
         t = get_t(f, types)
         g = g_sigmoid(x, W)
-        #MSE = np.dot(np.transpose(np.subtract(g, t)), np.subtract(g, t))
         MSE = np.dot(np.transpose(np.subtract(g, t)), np.subtract(g, t))
         array.append(MSE)
-        #print(MSE)
 
     MSE = 0
     for o in array:
@@ -216,11 +197,6 @@ def get_results(data, W, types, features = [1,1,1,1]):
 
 def get_result_matrix(data, W, types, features = [1,1,1,1]):
     result_matrix = np.zeros((3,3), dtype=int)
-    #header = ["Classified / True class", types[0], types[1], types[2]]
-    #empty = [".", ".", ".", ".", "."]
-    #result_matrix.append(header)
-    #for i in range(5):
-    #    result_matrix.append(empty)
 
     for f in data:
         t = get_t(f, types)
@@ -232,7 +208,6 @@ def get_result_matrix(data, W, types, features = [1,1,1,1]):
     return result_matrix
 
 
-
 # Returns confusion matrix to training and test data and plots MSE and error for each step factor
 def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
     #print("Initialsing variables")
@@ -241,8 +216,6 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
     test_data = init_test_data(types, train)  # Flower array used for testing
 
     W = init_W(3, np.sum(features))
-
-
 
     print("Step size = " + str(step) + ", processing... ")
     iteration = np.arange(0, iterations)
@@ -256,6 +229,7 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
         W = iterate_W(W, gradMSE, step)
         results_train = get_results(training_data, W, types, features)
         error_array_train.append(100 * results_train[1] / (results_train[0] + results_train[1]))
+
         # MSE for training
         MSE = compute_MSE(training_data, W, types, features)
         MSE_array.append(MSE)
@@ -280,28 +254,20 @@ def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
     print("Smallest error: " + str(error_array_test[MSE_min]) + "% at iteration: " + str(error_min) + ", step size = " + str(step))
     print(" ")
 
-
     # Plotting Error training
     plt.figure(3)
     plt.plot(iteration, error_array_train, label="step factor = " + str(step))
     error_min = np.argmin(error_array_train)
 
-
     # Plotting confusion matrix
     cm_train = get_result_matrix(training_data, W, types, features)
     cm_test = get_result_matrix(test_data, W, types, features)
-
-    #print("Result training set: ")
-    #print(cm_train)
-    #print("Result test set: ")
-    #print(cm_test)
 
     return [cm_train, cm_test]
 
 
 
 def simulate_prob2(iterations, step, train, types, features, figure_index):
-    #print("Initialsing variables")
     training_data = init_training_data(types, train)    # Flower array used for training
     test_data = init_test_data(types, train)           # Flower array used for testing
 
@@ -327,13 +293,7 @@ def simulate_prob2(iterations, step, train, types, features, figure_index):
 
         error_array.append(100*results[1]/(results[0] + results[1]))
 
-
-    # Plotting MSE and Error
-    #plt.figure(1)
-    #plt.plot(iteration, MSE_array, label = "step factor =" +str(step))
     MSE_min = np.argmin(MSE_array)
-    #print("Smallest MSE: " + str(MSE_array[MSE_min]) + " at iteration: " + str(MSE_min) + ", step size = " + str(step))
-
 
 
     # Plotting Error

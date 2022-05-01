@@ -49,12 +49,9 @@ def prob1(train, test):
     plt.xlabel("Iterations")
     plt.ylabel("Error %")
 
-    # Code for plotting confusion matrix was found on:
-    # https://www.stackvidhya.com/plot-confusion-matrix-in-python-and-why/
+
+
     # We use step factor equal 0.005
-
-
-
     # Plottin Confusion matrixes (cm) for training set.
     plt.figure(4)
 
@@ -70,8 +67,6 @@ def prob1(train, test):
     ax.set_ylabel('Actual Flower Category ')
     ax.xaxis.set_ticklabels(types)
     ax.yaxis.set_ticklabels(types)
-
-
 
 
     # Plottin Confusion matrixes (cm) for test set
