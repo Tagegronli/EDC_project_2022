@@ -1,13 +1,14 @@
-from Utilities import *
+from Iris_TTT4275.Utilities import *
 import random
 
-# This code is a part of problem 2.
-def hisogram():  #plots data in histogram
+
+def histogram():
     types = ["Iris setosa", "Iris Versicolor", "Iris Virginica"]
 
-    setosa_array = get_flower_array("class_1.csv", types[0])
-    versicolor_array = get_flower_array("class_2.csv", types[1])
-    virginica_array = get_flower_array("class_3.csv", types[2])
+    BASE = "Iris_TTT4275/"
+    setosa_array = get_flower_array(f"{BASE}class_1.csv", types[0])
+    versicolor_array = get_flower_array(f"{BASE}class_2.csv", types[1])
+    virginica_array = get_flower_array(f"{BASE}class_3.csv", types[2])
 
     setosa_sepal_l = []
     setosa_sepal_w = []

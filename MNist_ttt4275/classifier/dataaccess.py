@@ -1,6 +1,6 @@
 from mnist import MNIST
 
-mndata = MNIST("mnist_data")
+mndata = MNIST("MNist_ttt4275/mnist_data")
 mndata.gz = True
 
 def get_training_data(by_class=False):

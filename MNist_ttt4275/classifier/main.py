@@ -16,15 +16,15 @@ def run():
         use_clustering=False,
         templates_per_class=30)
     templates = classify.get_random_templates(training_data, opts)
-    print("Classifying testing images with templates = training images ...")
+    print("Classifying testing images with templates = stochastic selection of training images...")
     results = classify.classify(templates, testing_images, testing_labels, opts)
     results.pprint()
     
     plotting.confusion_matrix_heatmap(results.confusion_matrix, 
     f"Confusion matrix for NN ({opts.templates_per_class} stochastically selected templates per class)")
-    # Plotting 3 misclassified pictures (1b)
+    #print("Plotting 3 misclassified pictures (1b)")
     plotting.plot_guesses(results.incorrect_samples, "", show_guess=True)
-    # Plotting 3 correctly classified pictures (1c)
+    #print("Plotting 3 correctly classified pictures (1c)")
     plotting.plot_guesses(results.correct_samples, "")
 
 
@@ -58,7 +58,7 @@ def run():
     f"Confusion matrix for kNN ({opts.templates_per_class} clusters per class, k = {opts.k})")
 
     # ALL TASKS COMPLETED.
-    print("Total run time: %d ms" % ((time.time()-t_init)*1000))
+    print("Total run time (mnist): %d ms" % ((time.time()-t_init)*1000))
     # sys.exit(1)
 
-run()
+# run()
