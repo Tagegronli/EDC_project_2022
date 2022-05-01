@@ -84,12 +84,12 @@ def prob2(train, test):
         ax.yaxis.set_ticklabels(types)
 
         figure_index +=1
-
+    plt.show()
 
 
 
  # [flower.sepal_l, flower.sepal_w, flower.petal_l, flower.petal_w]
-prob2(30,20)
+#prob2(30,20)
 
 # Showing all plots
-plt.show()
+

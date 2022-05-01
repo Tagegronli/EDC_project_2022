@@ -88,4 +88,4 @@ def hisogram():
 
 
 
-hisogram()
+#hisogram()
