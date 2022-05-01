@@ -61,3 +61,4 @@ def run():
     print("Total run time: %d ms" % ((time.time()-t_init)*1000))
     # sys.exit(1)
 
+run()
