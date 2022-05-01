@@ -8,23 +8,21 @@ import seaborn as sns
 # Flower class, holds all data and has a "type" which is the label.
 # If type is not spesified, it will try to look for it in the dataset
 class flower:
-    def __init__(self, data, type = None): # <- Must take in data only consisting of strings
-        self.sepal_L = float(data[0])
+    def __init__(self, data, type=None):  # data must be strings
+        self.sepal_l = float(data[0])
         self.sepal_w = float(data[1])
         self.petal_l = float(data[2])
         self.petal_w = float(data[3])
 
-        if(type != None):
+        if (type != None):  # Manually overwrite type
             self.type = type
 
-        elif(len(data) > 4):
+        elif (len(data) > 4):  # Find type in data
             self.type = data[4]
 
-        else:
+        else:  # If no type, set as unknown
             self.type = "unknown"
-
         return
-
 
 
 
@@ -54,44 +52,54 @@ def init_W(C, D):
 
 
 
-def init_training_data(types, samples):
+def init_training_data(types, training_samples):
     setosa_array = get_flower_array("class_1.csv", types[0])
     versicolor_array = get_flower_array("class_2.csv", types[1])
     virginica_array = get_flower_array("class_3.csv", types[2])
 
-    training_data = setosa_array[:samples] + versicolor_array[:samples] + virginica_array[:samples]
+    training_data = setosa_array[:training_samples] + versicolor_array[:training_samples] + virginica_array[:training_samples]
 
     return training_data
 
 
 
 
-def init_test_data(types, samples):
+def init_test_data(types, training_samples):
     setosa_array = get_flower_array("class_1.csv", types[0])
     versicolor_array = get_flower_array("class_2.csv", types[1])
     virginica_array = get_flower_array("class_3.csv", types[2])
 
-    test_data = setosa_array[samples:] + versicolor_array[samples:] + virginica_array[samples:]
+    test_data = setosa_array[training_samples:] + versicolor_array[training_samples:] + virginica_array[training_samples:]
 
     return test_data
 
 
+def init_x(flower, features = [1,1,1,1]):
+    x = [1]
+
+    if(features[0] == 1):
+        x.append(flower.sepal_l)
+    if (features[1] == 1):
+        x.append(flower.sepal_w)
+    if (features[2] == 1):
+        x.append(flower.petal_l)
+    if (features[3] == 1):
+        x.append(flower.petal_w)
+
+    #x = [1, flower.sepal_l, flower.sepal_w, flower.petal_l, flower.petal_w] # <- Old implementation
+    return x
 
 
-def get_x_data(traning_data):
+
+def get_x_data(traning_data, featues = [1,1,1,1]): #Not in use in problem 1
     x_data = []
-    for i in range(len(traning_data)):
-        x = [traning_data[i].sepal_L, traning_data[i].sepal_w, traning_data[i].petal_l, traning_data[i].petal_w]
+    for f in traning_data:
+        x = init_x(f, featues)
         x_data.append(x)
 
     return x_data
 
 
-
-
-def init_x(flower):
-    x = [1, flower.sepal_L, flower.sepal_w, flower.petal_l, flower.petal_w]
-    return x
 
 
 
@@ -152,10 +160,11 @@ def compute_gradMSE_k(x, g, t):
 
 
 
-def compute_gradMSE(types, W, traning_data): # W already updated
-    gradMSE = np.zeros(shape = (4+1,3))
+def compute_gradMSE(types, W, traning_data, features = [1,1,1,1]): # W already updated
+    #gradMSE = np.zeros(shape = (4+1,3))
+    gradMSE = np.zeros(shape=(len(W),3))
     for k in traning_data:
-        x = init_x(k)
+        x = init_x(k, features)
         g = g_sigmoid(x, W)
         t = get_t(k, types)
 
@@ -171,12 +180,13 @@ def iterate_W(W, gradMSE, step):
     return W
 
 
-def compute_MSE(test_data, W, types):
+def compute_MSE(test_data, W, types, features = [1,1,1,1]):
     array = []
     for f in test_data:
-        x = init_x(f)
+        x = init_x(f, features)
         t = get_t(f, types)
         g = g_sigmoid(x, W)
+        #MSE = np.dot(np.transpose(np.subtract(g, t)), np.subtract(g, t))
         MSE = np.dot(np.transpose(np.subtract(g, t)), np.subtract(g, t))
         array.append(MSE)
         #print(MSE)
@@ -187,12 +197,12 @@ def compute_MSE(test_data, W, types):
 
     return (1/2)*MSE
 
-def get_results(test_data, W, types):
+def get_results(data, W, types, features = [1,1,1,1]):
     correct = 0
     false = 0
-    for f in test_data:
+    for f in data:
         t = get_t(f, types)
-        g = g_sigmoid(init_x(f), W)
+        g = g_sigmoid(init_x(f, features), W)
         classified = np.argmax(g)
         true  = np.argmax(t)
         if(classified == true):
@@ -205,7 +215,7 @@ def get_results(test_data, W, types):
 
 
 ##### WORK IN PROGRESS ######
-def get_result_matrix(data, W, types):
+def get_result_matrix(data, W, types, features = [1,1,1,1]):
     result_matrix = np.zeros((3,3), dtype=int)
     #header = ["Classified / True class", types[0], types[1], types[2]]
     #empty = [".", ".", ".", ".", "."]
@@ -215,49 +225,48 @@ def get_result_matrix(data, W, types):
 
     for f in data:
         t = get_t(f, types)
-        g = g_sigmoid(init_x(f), W)
+        g = g_sigmoid(init_x(f, features), W)
 
         classified = np.argmax(g)
         true = np.argmax(t)
         result_matrix[true][classified] += 1
-
-
-
-
-
-
     return result_matrix
 
+
+
 # Returns confusion matrix to traning and test data and plots MSE and error for each step factor
-def simulate(iterations, step, train, test, types):
+def simulate_prob1(iterations, step, train, types, features = [1,1,1,1]):
     #print("Initialsing variables")
     traning_data = init_training_data(types, train)    # Flower array used for training
-    test_data = init_test_data(types, test)           # Flower array used for testing
+    #test_data = init_test_data(types, test)           # Flower array used for testing
+    test_data = init_test_data(types, train)
 
-    W = init_W(3, 4)
+    W = init_W(3, np.sum(features))
 
 
 
     print("Step size = " + str(step) + ", processing... ")
     iteration = np.arange(0, iterations)
     MSE_array = []
-    error_array = []
+    error_array_train = []
+    error_array_test = []
 
     for i in iteration:
         # Training
-        gradMSE = compute_gradMSE(types, W, traning_data)
+        gradMSE = compute_gradMSE(types, W, traning_data, features)
         W = iterate_W(W, gradMSE, step)
+        results_train = get_results(traning_data, W, types, features)
+        error_array_train.append(100 * results_train[1] / (results_train[0] + results_train[1]))
+
 
         #Testing
-        MSE = compute_MSE(test_data, W, types)
+        MSE = compute_MSE(test_data, W, types, features)
         MSE_array.append(MSE)
-
-        results = get_results(test_data, W, types)
-
-        error_array.append(100*results[1]/(results[0] + results[1]))
+        results_test = get_results(test_data, W, types, features)
+        error_array_test.append(100*results_test[1]/(results_test[0] + results_test[1]))
 
 
-    # Plotting MSE and Error
+    # Plotting MSE test
     plt.figure(1)
     plt.plot(iteration, MSE_array, label = "step factor =" +str(step))
     MSE_min = np.argmin(MSE_array)
@@ -265,19 +274,23 @@ def simulate(iterations, step, train, test, types):
 
 
 
-    # Plotting Error
+    # Plotting Error test
     plt.figure(2)
-    plt.plot(iteration, error_array, label="step factor = " + str(step))
-    error_min = np.argmin(error_array)
-    print("Smallest error: " + str(error_array[MSE_min]) + " at iteration: " + str(error_min) + ", step size = " + str(step))
+    plt.plot(iteration, error_array_test, label="step factor = " + str(step))
+    error_min = np.argmin(error_array_test)
+    print("Smallest error: " + str(error_array_test[MSE_min]) + "% at iteration: " + str(error_min) + ", step size = " + str(step))
     print(" ")
 
 
-### WIP:
+    # Plotting Error training
+    plt.figure(3)
+    plt.plot(iteration, error_array_train, label="step factor = " + str(step))
+    error_min = np.argmin(error_array_train)
+
 
     # Plotting confusion matrix
-    cm_train = get_result_matrix(traning_data, W, types)
-    cm_test = get_result_matrix(test_data, W, types)
+    cm_train = get_result_matrix(traning_data, W, types, features)
+    cm_test = get_result_matrix(test_data, W, types, features)
 
     #print("Result traning set: ")
     #print(cm_train)
@@ -288,5 +301,60 @@ def simulate(iterations, step, train, test, types):
 
 
 
+def simulate_prob2(iterations, step, train, types, features, figure_index):
+    #print("Initialsing variables")
+    traning_data = init_training_data(types, train)    # Flower array used for training
+    test_data = init_test_data(types, train)           # Flower array used for testing
 
+
+    W = init_W(3, np.sum(features))
+
+
+
+    print("Step size = " + str(step) + ", processing... ")
+    iteration = np.arange(0, iterations)
+    MSE_array = []
+    error_array = []
+
+    for i in iteration:
+        # Training
+        gradMSE = compute_gradMSE(types, W, traning_data, features)
+        W = iterate_W(W, gradMSE, step)
+
+        #Testing
+        MSE = compute_MSE(test_data, W, types, features)
+        MSE_array.append(MSE)
+
+        results = get_results(test_data, W, types, features)
+
+        error_array.append(100*results[1]/(results[0] + results[1]))
+
+
+    # Plotting MSE and Error
+    #plt.figure(1)
+    #plt.plot(iteration, MSE_array, label = "step factor =" +str(step))
+    MSE_min = np.argmin(MSE_array)
+    #print("Smallest MSE: " + str(MSE_array[MSE_min]) + " at iteration: " + str(MSE_min) + ", step size = " + str(step))
+
+
+
+    # Plotting Error
+    plt.figure(figure_index)
+    plt.plot(iteration, error_array, label="step factor = " + str(step))
+    error_min = np.argmin(error_array)
+    print("Smallest error: " + str(error_array[MSE_min]) + "% at iteration: " + str(error_min) + ", step size = " + str(step))
+    print(" ")
+
+
+
+    # Plotting confusion matrix
+    cm_train = get_result_matrix(traning_data, W, types, features)
+    cm_test = get_result_matrix(test_data, W, types, features)
+
+    #print("Result traning set: ")
+    #print(cm_train)
+    #print("Result test set: ")
+    #print(cm_test)
+
+    return [cm_train, cm_test]
 

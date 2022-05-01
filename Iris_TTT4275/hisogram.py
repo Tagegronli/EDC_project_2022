@@ -13,7 +13,7 @@ def hisogram():
     setosa_petal_l = []
     setosa_petal_w = []
     for f in setosa_array:
-        setosa_sepal_l.append(f.sepal_L)
+        setosa_sepal_l.append(f.sepal_l)
         setosa_sepal_w.append(f.sepal_w)
         setosa_petal_l.append(f.petal_l)
         setosa_petal_w.append(f.petal_w)
@@ -24,7 +24,7 @@ def hisogram():
     versicolor_petal_l = []
     versicolor_petal_w = []
     for f in versicolor_array:
-        versicolor_sepal_l.append(f.sepal_L)
+        versicolor_sepal_l.append(f.sepal_l)
         versicolor_sepal_w.append(f.sepal_w)
         versicolor_petal_l.append(f.petal_l)
         versicolor_petal_w.append(f.petal_w)
@@ -35,12 +35,12 @@ def hisogram():
     virginica_petal_l = []
     virginica_petal_w = []
     for f in virginica_array:
-        virginica_sepal_l.append(f.sepal_L)
+        virginica_sepal_l.append(f.sepal_l)
         virginica_sepal_w.append(f.sepal_w)
         virginica_petal_l.append(f.petal_l)
         virginica_petal_w.append(f.petal_w)
 
-
+    plt.figure(9)
     (fig, ax) = plt.subplots(2,2)
 
     bins = np.linspace(4.0, 8.0, 40)
