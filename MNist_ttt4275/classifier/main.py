@@ -1,10 +1,7 @@
 import time
-from classifier import dataaccess, cli, classify, plotting
+from classifier import dataaccess, classify, plotting
 
 def run():    
-    args = cli.get_arguments()
-    args = cli.check_arguments(args)
-
     t_init = time.time()
     print("Started classifier.")
     NCLASSES = 10
@@ -17,7 +14,7 @@ def run():
         NCLASSES, 
         k=1,
         use_clustering=False,
-        templates_per_class=64)
+        templates_per_class=30)
     templates = classify.get_random_templates(training_data, opts)
     print("Classifying testing images with templates = training images ...")
     results = classify.classify(templates, testing_images, testing_labels, opts)
